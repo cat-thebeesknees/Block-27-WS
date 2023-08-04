@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import PropTypes from "prop-types";
 
-export default function SignUpForm() {
+export default function SignUpForm({ setToken }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
@@ -9,14 +10,27 @@ export default function SignUpForm() {
     event.preventDefault();
 
     try {
-        const response = await fetch("https://fsa-jwt-practice.herokuapp.com/signup");
-        const result = await response.json();
-        console.log(result);
-      
+        const response = await fetch('https://fsa-jwt-practice.herokuapp.com/signup', {
+        method: "POST", 
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }), 
+        });
+
+      const result = await response.json();
+      console.log(result);
+
+      setToken(result.token);
     } catch (error) {
       setError(error.message);
     }
   }
+
+
+
+
+
 
   return (
     <>
@@ -26,6 +40,7 @@ export default function SignUpForm() {
         <label>
           Username:{" "}
           <input
+          type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
@@ -34,6 +49,7 @@ export default function SignUpForm() {
         <label>
           Password:{" "}
           <input
+          type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -43,3 +59,6 @@ export default function SignUpForm() {
     </>
   );
 }
+SignUpForm.propTypes = {
+  setToken: PropTypes.func.isRequired,
+};
